@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -151,7 +151,21 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
-vim.opt.cursorline = true
+-- vim.opt.cursorline = true
+-- voglio mostrare la riga corrente solo quando il cursore è dentro la finestra
+vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
+  pattern = '*',
+  callback = function()
+    vim.wo.cursorline = true
+  end,
+})
+
+vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
+  pattern = '*',
+  callback = function()
+    vim.wo.cursorline = false
+  end,
+})
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
@@ -164,7 +178,7 @@ vim.opt.scrolloff = 10
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -188,6 +202,11 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+vim.keymap.set('n', '<C-Left>', '<C-w>h', { desc = 'Window left' })
+vim.keymap.set('n', '<C-Right>', '<C-w>l', { desc = 'Window right' })
+vim.keymap.set('n', '<C-Down>', '<C-w>j', { desc = 'Window down' })
+vim.keymap.set('n', '<C-Up>', '<C-w>k', { desc = 'Window up' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -317,6 +336,7 @@ require('lazy').setup({
       spec = {
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
         { '<leader>d', group = '[D]ocument' },
+        { '<leader>q', group = '[Q]uickfix' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>w', group = '[W]orkspace' },
@@ -383,12 +403,60 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          mappings = {
+            i = {
+              ['<c-enter>'] = 'to_fuzzy_refine',
+              ['<c-d>'] = 'delete_buffer',
+              ['<esc>'] = require('telescope.actions').close,
+            },
+            n = {
+              ['<c-d>'] = 'delete_buffer',
+            },
+          },
+          file_ignore_patterns = {
+            '^.git',
+            '^.idea',
+          },
+          vimgrep_arguments = {
+            'rg', -- Use ripgrep instead of grep
+            '--color=never', -- Disable color output (better for parsing)
+            '--no-heading', -- Don't group matches by file
+            '--with-filename', -- Show file names for matches
+            '--line-number', -- Show line numbers
+            '--column', -- Show column numbers
+            '--smart-case', -- Case-insensitive if pattern is lowercase, case-sensitive otherwise
+            '--hidden', -- Include hidden files
+            '--glob=!.git/*', -- Exclude .git directory
+            '--no-ignore', -- Don't respect .gitignore, etc.
+            '--multiline',
+          },
+        },
+        pickers = {
+          live_grep = {
+            additional_args = function(opts)
+              return { '--hidden' }
+            end,
+          },
+          lsp_document_symbols = {
+            symbol_width = 50,
+            symbols = {
+              'class',
+              'function',
+              'method',
+              'constructor',
+              'interface',
+              'module',
+              'namespace',
+              'package',
+              'struct',
+              'trait',
+              'enum',
+              'variable',
+              -- Note: "property" is intentionally left out
+            },
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -404,7 +472,9 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', function()
+        builtin.find_files { hidden = true }
+      end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -447,22 +517,22 @@ require('lazy').setup({
     opts = {
       library = {
         -- Load luvit types when the `vim.uv` word is found
-        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+        { path = 'luvit-meta/library', words = { 'vim%.uv' } },
       },
     },
   },
+  { 'Bilal2453/luvit-meta', lazy = true },
   {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
-      -- Mason must be loaded before its dependents so we need to set it up here.
-      -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-      { 'williamboman/mason.nvim', opts = {} },
+      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
+      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
       { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by nvim-cmp
@@ -617,7 +687,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -626,8 +696,10 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
+        ts_ls = {
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+        },
+        cucumber_language_server = {},
 
         lua_ls = {
           -- cmd = { ... },
@@ -646,16 +718,13 @@ require('lazy').setup({
       }
 
       -- Ensure the servers and tools above are installed
-      --
-      -- To check the current status of installed tools and/or manually install
-      -- other tools, you can run
+      --  To check the current status of installed tools and/or manually install
+      --  other tools, you can run
       --    :Mason
       --
-      -- You can press `g?` for help in this menu.
-      --
-      -- `mason` had to be setup earlier: to configure its options see the
-      -- `dependencies` table for `nvim-lspconfig` above.
-      --
+      --  You can press `g?` for help in this menu.
+      require('mason').setup()
+
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
@@ -913,6 +982,15 @@ require('lazy').setup({
         additional_vim_regex_highlighting = { 'ruby' },
       },
       indent = { enable = true, disable = { 'ruby' } },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<C-h>',
+          node_incremental = '<C-h>n',
+          scope_incremental = '<C-h>c',
+          node_decremental = '<C-h>m',
+        },
+      },
     },
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
@@ -931,23 +1009,19 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
-  --
-  -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
-  -- Or use telescope!
-  -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
-  -- you can continue same window with `<space>sr` which resumes last telescope search
+  --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
+  { import = 'custom.plugins' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
@@ -972,3 +1046,83 @@ require('lazy').setup({
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- questi sono i miei remap:
+-- quickfix list:
+
+vim.keymap.set('n', '<leader>qn', ':cnext<CR>', { noremap = true, silent = true, desc = 'Next quickfix list item' })
+vim.keymap.set('n', '<leader>qp', ':cprev<CR>', { noremap = true, silent = true, desc = 'Previous quickfix list item' })
+
+-- Delete current quickfix entry under cursor
+vim.keymap.set('n', '<leader>qr', function()
+  local current_line = vim.fn.line '.'
+  local qf_list = vim.fn.getqflist()
+  local new_list = {}
+
+  for idx, item in ipairs(qf_list) do
+    if idx ~= current_line then
+      table.insert(new_list, item)
+    end
+  end
+  --
+  -- Store cursor position before updating the quickfix list
+  local cursor_pos = current_line
+  if cursor_pos > #new_list then
+    cursor_pos = #new_list
+  end
+
+  vim.fn.setqflist(new_list)
+
+  -- Restore cursor position
+  if #new_list > 0 then
+    vim.cmd('cc ' .. cursor_pos)
+  end
+  -- set focus on quickfix window
+  vim.cmd 'copen'
+end, { noremap = true, silent = true, desc = 'Remove current quickfix entry' })
+
+-- TODO: non funziona, elimina elementi diversi da quelli selezionati.
+-- Delete visually selected quickfix entries
+vim.keymap.set('x', '<leader>qr', function()
+  local start_line = vim.fn.line "'<"
+  print('start_line', vim.inspect(start_line))
+
+  local end_line = vim.fn.line "'>"
+  local qf_list = vim.fn.getqflist()
+  local new_list = {}
+
+  for idx, item in ipairs(qf_list) do
+    if idx < start_line or idx > end_line then
+      table.insert(new_list, item)
+    end
+  end
+
+  -- Store cursor position before updating the quickfix list
+  local cursor_pos = start_line
+  if cursor_pos > #new_list then
+    cursor_pos = #new_list
+  end
+
+  vim.fn.setqflist(new_list)
+
+  -- Restore cursor position
+  if #new_list > 0 then
+    local new_pos = math.max(1, math.min(start_line, #new_list))
+    vim.cmd('cc ' .. new_pos)
+  end
+end, { noremap = true, silent = true })
+
+-- Toggle quickfix window (close if open, open if closed)
+vim.keymap.set('n', '<leader>qt', function()
+  local qf_exists = false
+  for _, win in pairs(vim.fn.getwininfo()) do
+    if win['quickfix'] == 1 then
+      qf_exists = true
+    end
+  end
+  if qf_exists == true then
+    vim.cmd 'cclose'
+  else
+    vim.cmd 'copen'
+  end
+end, { noremap = true, silent = true, desc = 'Toggle quickfix list' })

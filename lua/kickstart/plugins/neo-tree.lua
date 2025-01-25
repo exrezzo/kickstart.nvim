@@ -11,7 +11,7 @@ return {
   },
   cmd = 'Neotree',
   keys = {
-    { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '\\', ':Neotree reveal position=float<CR>', desc = 'NeoTree reveal', silent = true },
   },
   opts = {
     filesystem = {
@@ -19,6 +19,14 @@ return {
         mappings = {
           ['\\'] = 'close_window',
         },
+        auto_expand_width = true,
+      },
+      filtered_items = {
+        visible = true,
+        hide_dotfiles = false,
+        hide_gitignored = false,
+        hide_hidden = false,
+        show_hidden_count = true,
       },
     },
   },
