@@ -29,5 +29,14 @@ return {
         show_hidden_count = true,
       },
     },
+    event_handlers = {
+      {
+        -- settiamo il relative numbering quando entriamo nel buffer di neo-tree
+        event = 'neo_tree_buffer_enter',
+        handler = function()
+          vim.opt_local.relativenumber = true
+        end,
+      },
+    },
   },
 }
