@@ -987,10 +987,10 @@ require('lazy').setup({
       incremental_selection = {
         enable = true,
         keymaps = {
-          init_selection = '<C-h>',
-          node_incremental = '<C-h>n',
-          scope_incremental = '<C-h>c',
-          node_decremental = '<C-h>m',
+          init_selection = '<CR>', -- enter to start selection
+          node_incremental = '<CR>', -- enter to increment
+          scope_incremental = '<Tab>', -- tab to increment scope
+          node_decremental = '<BS>', -- backspace to decrement
         },
       },
     },
