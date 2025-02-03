@@ -25,10 +25,6 @@ return {
     event = 'VeryLazy',
   },
   {
-    'github/copilot.vim',
-    event = 'BufEnter',
-  },
-  {
     'nvim-treesitter/nvim-treesitter-context',
     config = function()
       require('treesitter-context').setup {
@@ -43,9 +39,36 @@ return {
       { 'nvim-lua/plenary.nvim', branch = 'master' }, -- for curl, log and async functions
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
-    opts = {
-      -- See Configuration section for options
-    },
+    config = function()
+      require('CopilotChat').setup {
+        -- See Configuration section for options
+        model = 'claude-3.5-sonnet',
+
+        context = 'files', -- Use files context for entire project
+        -- Override the default file scanning behavior
+        -- cosi può guardare nei file nascosti
+        contexts = {
+          files = {
+            -- Override the default files context to include hidden files/folders
+            resolve = function(_, source)
+              local context = require 'CopilotChat.context'
+              local utils = require 'CopilotChat.utils'
+              local cwd = utils.win_cwd(source and source.winnr)
+
+              -- Scan directory with custom options
+              local files = utils.scan_dir(cwd, {
+                add_dirs = false, -- Don't include directory entries
+                respect_gitignore = false, -- Don't respect gitignore
+                hidden = true, -- Include hidden files
+              })
+
+              return context.files(source and source.winnr, true)
+            end,
+          },
+        },
+      }
+      vim.keymap.set('n', '<leader>cc', ':CopilotChatToggle<CR>', { noremap = true, silent = true, desc = 'Toggle Copilot Chat' })
+    end,
     -- See Commands section for default commands if you want to lazy load on them
   },
 }
