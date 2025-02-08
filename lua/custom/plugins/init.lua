@@ -61,26 +61,72 @@ return {
       require('CopilotChat').setup {
         -- See Configuration section for options
         model = 'claude-3.5-sonnet',
-
-        context = 'files', -- Use files context for entire project
-        -- Override the default file scanning behavior
-        -- cosi può guardare nei file nascosti
+        -- ho modificato il sorgente del plugin aggiungendo una funzione per il context
+        -- scopiazzando e modificando la funzione M.files(winnr, with_content):
+        --
+        -- function M.filesHidden(winnr, with_content)
+        --   local cwd = utils.win_cwd(winnr)
+        --
+        --   notify.publish(notify.STATUS, 'Scanning files')
+        --
+        --   local files = utils.scan_dir(cwd, {
+        --     hidden = true,
+        --     add_dirs = false,
+        --     respect_gitignore = true,
+        --   })
+        --
+        --   notify.publish(notify.STATUS, 'Reading files')
+        --
+        --   local out = {}
+        --
+        --   -- Create file list in chunks
+        --   local chunk_size = 100
+        --   for i = 1, #files, chunk_size do
+        --     local chunk = {}
+        --     for j = i, math.min(i + chunk_size - 1, #files) do
+        --       table.insert(chunk, files[j])
+        --     end
+        --
+        --     local chunk_number = math.floor(i / chunk_size)
+        --     local chunk_name = chunk_number == 0 and 'file_map' or 'file_map' .. tostring(chunk_number)
+        --
+        --     table.insert(out, {
+        --       content = table.concat(chunk, '\n'),
+        --       filename = chunk_name,
+        --       filetype = 'text',
+        --     })
+        --   end
+        --
+        --   -- Read all files if we want content as well
+        --   if with_content then
+        --     async.util.scheduler()
+        --
+        --     files = vim.tbl_filter(
+        --       function(file)
+        --         return file.ft ~= nil
+        --       end,
+        --       vim.tbl_map(function(file)
+        --         return {
+        --           name = utils.filepath(file),
+        --           ft = utils.filetype(file),
+        --         }
+        --       end, files)
+        --     )
+        --
+        --     for _, file in ipairs(files) do
+        --       local file_data = get_file(file.name, file.ft)
+        --       if file_data then
+        --         table.insert(out, file_data)
+        --       end
+        --     end
+        --   end
+        --
+        --   return out
+        -- end
         contexts = {
-          files = {
-            -- Override the default files context to include hidden files/folders
-            resolve = function(_, source)
-              local context = require 'CopilotChat.context'
-              local utils = require 'CopilotChat.utils'
-              local cwd = utils.win_cwd(source and source.winnr)
-
-              -- Scan directory with custom options
-              local files = utils.scan_dir(cwd, {
-                add_dirs = false, -- Don't include directory entries
-                respect_gitignore = false, -- Don't respect gitignore
-                hidden = true, -- Include hidden files
-              })
-
-              return context.files(source and source.winnr, true)
+          hiddenFiles = {
+            resolve = function(input, source)
+              return require('CopilotChat.context').filesHidden(source.winnr, input == 'full')
             end,
           },
         },
