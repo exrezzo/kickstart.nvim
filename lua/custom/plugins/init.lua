@@ -25,6 +25,24 @@ return {
     event = 'VeryLazy',
   },
   {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    init = function()
+      require('lualine').setup {
+        sections = {
+          lualine_c = {
+            {
+              'filename',
+              color = function()
+                return { fg = vim.fn.synIDattr(vim.fn.hlID 'Special', 'fg') }
+              end,
+            },
+          },
+        },
+      }
+    end,
+  },
+  {
     'nvim-treesitter/nvim-treesitter-context',
     config = function()
       require('treesitter-context').setup {
