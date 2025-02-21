@@ -702,6 +702,7 @@ require('lazy').setup({
           filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
         },
         cucumber_language_server = {},
+        jsonls = {},
 
         lua_ls = {
           -- cmd = { ... },
