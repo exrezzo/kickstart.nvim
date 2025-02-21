@@ -427,9 +427,10 @@ require('lazy').setup({
             '--smart-case', -- Case-insensitive if pattern is lowercase, case-sensitive otherwise
             '--hidden', -- Include hidden files
             '--glob=!.git/*', -- Exclude .git directory
-            '--no-ignore', -- Don't respect .gitignore, etc.
+            -- '--no-ignore', -- Don't respect .gitignore, etc.
             '--multiline',
           },
+          path_display = { 'smart' },
         },
         pickers = {
           live_grep = {
@@ -439,8 +440,15 @@ require('lazy').setup({
           },
           find_files = {
             hidden = true,
-            no_ignore = true, -- This will show files that are in .gitignore
-            find_command = { 'rg', '--files', '--hidden', '--no-ignore', '--glob', '!**/.git/*' },
+            -- no_ignore = true, -- This will show files that are in .gitignore
+            find_command = {
+              'rg',
+              '--files',
+              '--hidden',
+              -- '--no-ignore',
+              '--glob',
+              '!**/.git/*',
+            },
           },
           lsp_document_symbols = {
             symbol_width = 50,
