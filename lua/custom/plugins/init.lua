@@ -20,6 +20,7 @@ return {
       vim.keymap.set('n', '<C-Right>', '<cmd>TmuxNavigateRight<CR>')
     end,
   },
+  require 'custom.plugins.harpoon',
   {
     'LintaoAmons/scratch.nvim',
     event = 'VeryLazy',
