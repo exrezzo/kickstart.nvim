@@ -52,13 +52,13 @@ return {
     end,
   },
   {
-    'iamcco/markdown-preview.nvim',
-    cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
-    build = 'cd app && yarn install',
-    init = function()
-      vim.g.mkdp_filetypes = { 'markdown' }
-    end,
-    ft = { 'markdown' },
+    'MeanderingProgrammer/render-markdown.nvim',
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    opts = {
+      file_types = { 'markdown', 'copilot-chat' },
+    },
   },
   {
     'exrezzo/CopilotChat.nvim',
@@ -78,6 +78,10 @@ return {
             end,
           },
         },
+        -- You might also want to disable default header highlighting for copilot chat when doing this and set error header style and separator
+        highlight_headers = false,
+        separator = '---',
+        error_header = '> [!ERROR] Error',
       }
       vim.keymap.set('n', '<leader>cc', ':CopilotChatToggle<CR>', { noremap = true, silent = true, desc = 'Toggle Copilot Chat' })
     end,
