@@ -20,6 +20,19 @@ return {
       vim.keymap.set('n', '<C-Right>', '<cmd>TmuxNavigateRight<CR>')
     end,
   },
+  {
+    'mbbill/undotree',
+    keys = {
+      {
+        '<leader>u',
+        function()
+          vim.cmd.UndotreeToggle()
+          vim.cmd.UndotreeFocus()
+        end,
+        desc = 'Toggle Undotree and Focus',
+      },
+    },
+  },
   require 'custom.plugins.harpoon',
   {
     'LintaoAmons/scratch.nvim',
