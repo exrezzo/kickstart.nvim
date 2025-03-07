@@ -433,6 +433,17 @@ require('lazy').setup({
           path_display = { 'smart' },
         },
         pickers = {
+          buffers = {
+            sort_mru = true,
+            mappings = {
+              i = {
+                ['<c-d>'] = 'delete_buffer',
+              },
+              n = {
+                ['<c-d>'] = 'delete_buffer',
+              },
+            },
+          },
           live_grep = {
             additional_args = function(opts)
               return { '--hidden' }
