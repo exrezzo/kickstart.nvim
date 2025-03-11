@@ -21,6 +21,10 @@ return {
     end,
   },
   {
+    'sphamba/smear-cursor.nvim',
+    opts = {},
+  },
+  {
     'mbbill/undotree',
     keys = {
       {
