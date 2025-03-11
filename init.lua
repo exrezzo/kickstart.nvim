@@ -168,7 +168,7 @@ vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
 })
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 5
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
