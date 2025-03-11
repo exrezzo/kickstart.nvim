@@ -83,7 +83,7 @@ return {
     config = function()
       require('CopilotChat').setup {
         -- See Configuration section for options
-        model = 'claude-3.5-sonnet',
+        model = 'claude-3.7-sonnet-thought',
         contexts = {
           hiddenFiles = {
             resolve = function(input, source)
