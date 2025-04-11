@@ -1063,6 +1063,8 @@ require('lazy').setup({
 -- vim: ts=2 sts=2 sw=2 et
 
 -- questi sono i miei remap:
+-- save files:
+vim.keymap.set('n', '<c-s>', ':w<CR>', { noremap = true, silent = true, desc = 'Save file' })
 -- quickfix list:
 
 vim.keymap.set('n', '<leader>qn', ':cnext<CR>', { noremap = true, silent = true, desc = 'Next quickfix list item' })
