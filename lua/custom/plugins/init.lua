@@ -45,15 +45,24 @@ return {
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-    init = function()
+    config = function()
       require('lualine').setup {
         sections = {
           lualine_c = {
             {
               'filename',
-              color = function()
-                return { fg = vim.fn.synIDattr(vim.fn.hlID 'Special', 'fg') }
+              path = 1, -- Show relative path
+              fmt = function(str)
+                local filename = vim.fn.fnamemodify(str, ':t')
+                local path = vim.fn.fnamemodify(str, ':h') .. '/'
+                if path == './' then
+                  path = ' '
+                end
+                return path .. '%#TodoBgTEST#' .. filename .. '%*' -- run :highlight to see available colors
               end,
+              symbols = {
+                modified = ' ●', -- Text to show when file is modified
+              },
             },
           },
         },
