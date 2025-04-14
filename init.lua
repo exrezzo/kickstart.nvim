@@ -978,6 +978,7 @@ require('lazy').setup({
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
+        transparent = true, -- Background trasparente
       }
 
       -- Load the colorscheme here.
@@ -985,9 +986,6 @@ require('lazy').setup({
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'tokyonight-night'
     end,
-    opts = {
-      transparent = true,
-    },
   },
 
   -- Highlight todo, notes, etc in comments
