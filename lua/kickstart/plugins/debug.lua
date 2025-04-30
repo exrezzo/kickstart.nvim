@@ -144,5 +144,41 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
+
+    -- Ho creato queste configurazioni per fare il debug dei test cucumber di go.
+    -- cosi facendo, le configurzioni di default di dap-go non compariranno.
+    -- queste config sono molto basilari e andrebbero migliorate, tuttavia possono permettermi
+    -- di debuggare un singolo test passandolo con il formato:
+    -- ^TestFeatures/Auto_instant_matching_is_called_when_a_Pro_has_only_BM1_profiles$.
+    -- É inoltre necessario che la cwd sia quella del progetto, altrimenti il main_test.go non viene trovato.
+    --
+    -- É come se il comando che viene lanciato fosse:
+    -- dlv test -- -test.v -test.run ^TestFeatures/Auto_instant_matching_is_called_when_a_Pro_has_only_BM1_profiles$
+    -- questo è il comando necessario per lanciare un test in debug con delve. gli args aggiuntivi servono per selezionare il test.
+    dap.configurations.go = {
+      -- debug il file corrente di test con tutti i casi
+      {
+        type = 'delve',
+        name = 'Debug Test',
+        request = 'launch',
+        mode = 'test',
+        program = '${file}',
+      },
+      {
+        type = 'delve',
+        name = 'Debug Cucumber Test',
+        request = 'launch',
+        mode = 'test',
+        program = '${file}',
+        args = function()
+          local args_string = vim.fn.input 'Cucumber test name: '
+          local args_table = { '-test.v', '-test.run' }
+          for arg in string.gmatch(args_string, '%S+') do
+            table.insert(args_table, arg)
+          end
+          return args_table
+        end,
+      },
+    }
   end,
 }
