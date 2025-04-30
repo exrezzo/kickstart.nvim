@@ -163,6 +163,7 @@ return {
         request = 'launch',
         mode = 'test',
         program = '${file}',
+        outputMode = 'remote',
       },
       {
         type = 'delve',
@@ -178,6 +179,8 @@ return {
           end
           return args_table
         end,
+        -- necessario con Delve per mostrare l'output del programma nella finestra in basso:
+        outputMode = 'remote',
       },
     }
   end,
