@@ -78,15 +78,6 @@ return {
     end,
   },
   {
-    'MeanderingProgrammer/render-markdown.nvim',
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
-    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
-    opts = {
-      file_types = { 'markdown', 'copilot-chat' },
-    },
-  },
-  {
     'CopilotC-Nvim/CopilotChat.nvim',
     dependencies = {
       { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
@@ -112,5 +103,24 @@ return {
       vim.keymap.set('n', '<leader>cc', ':CopilotChatToggle<CR>', { noremap = true, silent = true, desc = 'Toggle Copilot Chat' })
     end,
     -- See Commands section for default commands if you want to lazy load on them
+  },
+  {
+    'OXY2DEV/markview.nvim',
+    lazy = false,
+    preview = {
+      icon_provider = 'mini', -- "mini" or "devicons"
+    },
+
+    -- Completion for `blink.cmp`
+    -- dependencies = { "saghen/blink.cmp" },
+  },
+  {
+    'Kurren123/mssql.nvim',
+    opts = {
+      -- optional
+      keymap_prefix = '<leader>m',
+    },
+    -- optional
+    dependencies = { 'folke/which-key.nvim' },
   },
 }
