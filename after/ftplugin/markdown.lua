@@ -44,10 +44,19 @@ vim.keymap.set('n', 'gO', function()
     items = { { remaining = true } },
   }
 
+  local cur_line = vim.api.nvim_win_get_cursor(0)[1]
+  local default_idx = 1
+  for i, entry in ipairs(entries) do
+    if entry.lnum <= cur_line then
+      default_idx = i
+    end
+  end
+
   pickers
     .new({}, {
       prompt_title = 'Document Outline',
       previewer = conf.grep_previewer {},
+      default_selection_index = default_idx,
       finder = finders.new_table {
         results = entries,
         entry_maker = function(entry)
