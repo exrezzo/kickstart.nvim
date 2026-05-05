@@ -32,10 +32,15 @@ vim.keymap.set('n', 'gO', function()
 
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
   local entries = {}
+  local in_code_block = false
   for i, line in ipairs(lines) do
-    local hashes, title = line:match '^(#+)%s+(.*)'
-    if hashes then
-      table.insert(entries, { title = title, lnum = i, level = #hashes })
+    if line:match '^```' then
+      in_code_block = not in_code_block
+    elseif not in_code_block then
+      local hashes, title = line:match '^(#+)%s+(.*)'
+      if hashes then
+        table.insert(entries, { title = title, lnum = i, level = #hashes })
+      end
     end
   end
 
