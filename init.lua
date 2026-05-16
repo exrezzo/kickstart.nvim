@@ -827,8 +827,15 @@ require('lazy').setup({
         automatic_enable = true, -- mason-lspconfig 2.x: server installati via :Mason GUI vengono abilitati automaticamente
       }
 
-      -- Per ogni server in `servers`: merge capabilities, registra la config e abilitalo.
-      -- Sostituisce il vecchio pattern `mason-lspconfig.setup{ handlers = {...} }` + `lspconfig[name].setup()`
+      -- Default globale: capabilities di blink.cmp applicate a TUTTI i server, anche quelli
+      -- installati ad-hoc via :Mason GUI senza essere in `servers`. mason-lspconfig 2.x con
+      -- `automatic_enable = true` li abilita ma altrimenti userebbero solo le capabilities
+      -- di default di Neovim.
+      vim.lsp.config('*', { capabilities = capabilities })
+
+      -- Per ogni server in `servers`: merge capabilities (con eventuali override per-server),
+      -- registra la config e abilitalo. Sostituisce il vecchio pattern
+      -- `mason-lspconfig.setup{ handlers = {...} }` + `lspconfig[name].setup()`
       -- con l'API nativa di Neovim 0.11+.
       for name, server in pairs(servers) do
         server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
