@@ -78,31 +78,8 @@ return {
     end,
   },
   {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    dependencies = {
-      { 'github/copilot.vim' }, -- or zbirenbaum/copilot.lua
-      { 'nvim-lua/plenary.nvim', branch = 'master' }, -- for curl, log and async functions
-    },
-    build = 'make tiktoken', -- Only on MacOS or Linux
-    config = function()
-      require('CopilotChat').setup {
-        -- See Configuration section for options
-        model = 'claude-3.7-sonnet-thought',
-        contexts = {
-          hiddenFiles = {
-            resolve = function(input, source)
-              return require('CopilotChat.context').filesHidden(source.winnr, input == 'full')
-            end,
-          },
-        },
-        -- You might also want to disable default header highlighting for copilot chat when doing this and set error header style and separator
-        highlight_headers = false,
-        separator = '---',
-        error_header = '> [!ERROR] Error',
-      }
-      vim.keymap.set('n', '<leader>cc', ':CopilotChatToggle<CR>', { noremap = true, silent = true, desc = 'Toggle Copilot Chat' })
-    end,
-    -- See Commands section for default commands if you want to lazy load on them
+    'github/copilot.vim',
+    event = 'InsertEnter',
   },
   {
     'OXY2DEV/markview.nvim',
