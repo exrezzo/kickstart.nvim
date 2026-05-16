@@ -4,6 +4,8 @@ return {
   dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim' },
   config = function()
     local harpoon = require 'harpoon'
+    local harpoon_extensions = require 'harpoon.extensions'
+    harpoon:extend(harpoon_extensions.builtins.highlight_current_file())
     harpoon:setup {
       settings = {
         save_on_toggle = true,
