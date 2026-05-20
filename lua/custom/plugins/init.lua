@@ -50,6 +50,21 @@ return {
     event = 'VeryLazy',
   },
   {
+    'Wansmer/symbol-usage.nvim',
+    event = 'LspAttach', -- need run before LspAttach if you use nvim 0.9. On 0.10 use 'LspAttach'
+    config = function()
+      require('symbol-usage').setup {
+        kinds = {
+          vim.lsp.protocol.SymbolKind.Function,
+          vim.lsp.protocol.SymbolKind.Method,
+          vim.lsp.protocol.SymbolKind.Interface,
+          vim.lsp.protocol.SymbolKind.Struct,
+        },
+        implementation = { enabled = true },
+      }
+    end,
+  },
+  {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
