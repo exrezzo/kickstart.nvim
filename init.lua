@@ -466,7 +466,28 @@ require('lazy').setup({
             -- '--no-ignore', -- Don't respect .gitignore, etc.
             '--multiline',
           },
-          path_display = { 'smart' },
+          -- Custom path_display: filename prominente, path in dim, accorciato (relativo a cwd, ~ per home).
+          -- Telescope passa paths assoluti per alcuni picker (lsp_*, oldfiles, buffers) e relativi
+          -- per altri (find_files, live_grep). `:~:.` li normalizza entrambi.
+          path_display = function(_, path)
+            path = vim.fn.fnamemodify(path, ':~:.')
+            local tail = vim.fn.fnamemodify(path, ':t')
+            local parent = vim.fn.fnamemodify(path, ':h')
+            if parent == '.' or parent == '' then
+              return '  ' .. tail
+            end
+            local indent = '  '
+            local sep = '   ' -- 3 spazi fissi tra filename e path (compatto ma respirato)
+            local result = indent .. tail .. sep .. parent
+            local path_start = #indent + #tail + #sep
+            return result, { { { path_start, #result }, 'Comment' } }
+          end,
+          layout_config = {
+            width = 0.95,
+            height = 0.92,
+            horizontal = { preview_width = 0.35 },
+            vertical = { preview_height = 0.5 },
+          },
         },
         pickers = {
           buffers = {
