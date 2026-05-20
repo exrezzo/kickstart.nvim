@@ -4,6 +4,13 @@
 -- See the kickstart.nvim README for more information
 return {
   {
+    -- uso kanagawa (al posto di tokyonight) poiché più simile al tema di JetBrains "Islands Dark"
+    'rebelot/kanagawa.nvim',
+    config = function()
+      vim.cmd.colorscheme 'kanagawa'
+    end,
+  },
+  {
     'christoomey/vim-tmux-navigator',
     event = 'VeryLazy',
     cmd = {
