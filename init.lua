@@ -731,6 +731,13 @@ require('lazy').setup({
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
           end
+
+          -- Code lens: annotazioni cliccabili sopra func/type/etc. ("run test", "generate", ecc.).
+          -- L'API nvim 0.12+ gestisce il refresh internamente — basta abilitarlo per il buffer.
+          if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_codeLens, event.buf) then
+            vim.lsp.codelens.enable(true, { bufnr = event.buf })
+            map('<leader>cl', vim.lsp.codelens.run, '[C]ode [L]ens run')
+          end
         end,
       })
 
@@ -780,7 +787,29 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        gopls = {},
+        gopls = {
+          settings = {
+            gopls = {
+              hints = {
+                assignVariableTypes = true,
+                compositeLiteralFields = true,
+                compositeLiteralTypes = true,
+                constantValues = true,
+                functionTypeParameters = true,
+                parameterNames = true,
+                rangeVariableTypes = true,
+              },
+              codelenses = {
+                generate = true, -- mostra "go generate" sopra //go:generate
+                gc_details = true, -- info di garbage collection inline
+                test = true, -- "run test"/"debug test" sopra TestXxx
+                tidy = true, -- "go mod tidy" sopra go.mod
+                upgrade_dependency = true,
+                vendor = true,
+              },
+            },
+          },
+        },
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
