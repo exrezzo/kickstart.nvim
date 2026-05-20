@@ -179,6 +179,12 @@ vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 5
 
+-- Treesitter-based folding (Neovim 0.10+). I file senza parser non si piegano (no-op).
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.opt.foldlevel = 99 -- aperti per default, pieghi a mano con za/zM
+vim.opt.foldlevelstart = 99
+
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
