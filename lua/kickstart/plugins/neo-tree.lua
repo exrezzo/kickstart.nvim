@@ -13,14 +13,36 @@ return {
   keys = {
     { '\\', ':Neotree reveal position=float<CR>', desc = 'NeoTree reveal', silent = true },
   },
+  init = function()
+    -- l'autocmd globale in init.lua spegne `cursorline` su WinLeave/BufLeave;
+    -- per i buffer neo-tree lo vogliamo invece tenere acceso, altrimenti
+    -- aprendo il filter popup (`/`) si perde la riga evidenziata sotto il cursore.
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = 'neo-tree',
+      callback = function(args)
+        vim.api.nvim_create_autocmd({ 'WinLeave', 'BufLeave' }, {
+          buffer = args.buf,
+          callback = function()
+            vim.wo.cursorline = true
+          end,
+        })
+      end,
+    })
+  end,
   opts = {
     filesystem = {
       window = {
         mappings = {
           ['\\'] = 'close_window',
+          -- override dei default `/` (fuzzy_finder) e `#` (fuzzy_sorter)
+          -- per tenere il filtro al submit (<CR>), invece di azzerarlo.
+          -- Necessario perché in tmux non riceviamo <S-CR>/<C-CR> distinti da <CR>.
+          ['/'] = { 'fuzzy_finder', config = { keep_filter_on_submit = true } },
+          ['#'] = { 'fuzzy_sorter', config = { keep_filter_on_submit = true } },
         },
         auto_expand_width = true,
       },
+      find_args = { fd = { '--ignore-case' } },
       filtered_items = {
         visible = true,
         hide_dotfiles = false,
@@ -31,7 +53,6 @@ return {
     },
     event_handlers = {
       {
-        -- settiamo il relative numbering quando entriamo nel buffer di neo-tree
         event = 'neo_tree_buffer_enter',
         handler = function()
           vim.opt_local.relativenumber = true
