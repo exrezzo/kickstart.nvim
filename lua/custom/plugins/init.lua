@@ -45,6 +45,7 @@ return {
     },
   },
   require 'custom.plugins.harpoon',
+  require 'custom.plugins.dotnet',
   {
     'LintaoAmons/scratch.nvim',
     event = 'VeryLazy',

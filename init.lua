@@ -607,7 +607,18 @@ require('lazy').setup({
       -- Automatically install LSPs and related tools to stdpath for Neovim
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-      { 'mason-org/mason.nvim', opts = {} },
+      {
+        'mason-org/mason.nvim',
+        opts = {
+          -- Il registry ufficiale mason-org NON ha Microsoft.CodeAnalysis.LanguageServer
+          -- (il pacchetto si chiama `roslyn`). Lo prendiamo dal registry di Crashdummyy,
+          -- che è il fork di riferimento usato dai consumer di seblyng/roslyn.nvim.
+          registries = {
+            'github:mason-org/mason-registry',
+            'github:Crashdummyy/mason-registry',
+          },
+        },
+      },
       'mason-org/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -875,6 +886,8 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'tree-sitter-cli', -- richiesto da nvim-treesitter main branch per compilare i parser
+        'roslyn', -- Microsoft Roslyn LS per C# (consumato da roslyn.nvim, non da mason-lspconfig)
+        'csharpier', -- formatter C# (chiamato da conform su filetype cs)
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -933,6 +946,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        cs = { 'csharpier' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1114,7 +1128,7 @@ require('lazy').setup({
     -- Per riabilitarla servirebbe un plugin separato o implementazione custom.
     -- additional_vim_regex_highlighting per ruby va aggiunto manualmente se serve.
     config = function()
-      local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      local parsers = { 'bash', 'c', 'c_sharp', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'sql', 'vim', 'vimdoc', 'xml' }
       require('nvim-treesitter').install(parsers)
 
       local available_parsers = require('nvim-treesitter').get_available()
