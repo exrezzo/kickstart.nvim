@@ -39,6 +39,8 @@ return {
           -- Necessario perché in tmux non riceviamo <S-CR>/<C-CR> distinti da <CR>.
           ['/'] = { 'fuzzy_finder', config = { keep_filter_on_submit = true } },
           ['#'] = { 'fuzzy_sorter', config = { keep_filter_on_submit = true } },
+          ['<leader>f'] = 'telescope_find', -- cerca file in folder
+          ['<leader>g'] = 'telescope_grep', -- live_grep in folder
         },
         auto_expand_width = true,
       },
@@ -58,6 +60,37 @@ return {
           vim.opt_local.relativenumber = true
         end,
       },
+    },
+    commands = {
+      -- cerca file in folder
+      telescope_find = function(state)
+        local node = state.tree:get_node()
+        local path = node:get_id()
+
+        -- Se il cursore è su un file invece che su una cartella,
+        -- prendiamo il percorso della cartella che lo contiene
+        if node.type ~= 'directory' then
+          path = node:get_parent_id()
+        end
+
+        require('telescope.builtin').find_files {
+          cwd = path,
+        }
+      end,
+
+      --live_grep in folder
+      telescope_grep = function(state)
+        local node = state.tree:get_node()
+        local path = node:get_id()
+
+        if node.type ~= 'directory' then
+          path = node:get_parent_id()
+        end
+
+        require('telescope.builtin').live_grep {
+          cwd = path,
+        }
+      end,
     },
   },
 }
