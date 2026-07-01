@@ -1225,6 +1225,27 @@ require('lazy').setup({
 -- vim: ts=2 sts=2 sw=2 et
 
 -- questi sono i miei remap:
+--
+-- Evita che { e } inquinino la jumplist
+vim.keymap.set('n', '}', '<cmd>keepjumps normal! }<cr>', { silent = true })
+vim.keymap.set('n', '{', '<cmd>keepjumps normal! {<cr>', { silent = true })
+
+-- fai lo stesso per la modalità visuale
+vim.keymap.set('v', '}', '<cmd>keepjumps normal! }<cr>', { silent = true })
+vim.keymap.set('v', '{', '<cmd>keepjumps normal! {<cr>', { silent = true })
+
+-- Apri una nuova Window di tmux nella directory del file corrente
+vim.keymap.set('n', '<leader>tmw', function()
+  local current_dir = vim.fn.expand '%:p:h'
+  vim.fn.system { 'tmux', 'new-window', '-c', current_dir }
+end, { desc = 'Nuova tmux window nella dir corrente' })
+
+-- Apri uno Split (verticale) di tmux nella directory del file corrente
+vim.keymap.set('n', '<leader>tmv', function()
+  local current_dir = vim.fn.expand '%:p:h'
+  vim.fn.system { 'tmux', 'split-window', '-h', '-c', current_dir }
+end, { desc = 'Nuovo tmux split nella dir corrente' })
+
 -- save files:
 vim.keymap.set('n', '<c-s>', ':w<CR>', { noremap = true, silent = true, desc = 'Save file' })
 -- quickfix list:
