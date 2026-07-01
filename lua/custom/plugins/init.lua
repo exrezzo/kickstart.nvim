@@ -105,16 +105,6 @@ return {
     event = 'InsertEnter',
   },
   {
-    'OXY2DEV/markview.nvim',
-    lazy = false,
-    preview = {
-      icon_provider = 'mini', -- "mini" or "devicons"
-    },
-
-    -- Completion for `blink.cmp`
-    -- dependencies = { "saghen/blink.cmp" },
-  },
-  {
     'Kurren123/mssql.nvim',
     opts = {
       -- optional
