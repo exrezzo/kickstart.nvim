@@ -516,6 +516,9 @@ require('lazy').setup({
               '!**/.git/*',
             },
           },
+          oldfiles = {
+            cwd_only = true,
+          },
           lsp_document_symbols = {
             symbol_width = 50,
             symbols = {
