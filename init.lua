@@ -866,7 +866,21 @@ require('lazy').setup({
             },
           },
         },
-        cucumber_language_server = {},
+        cucumber_language_server = {
+          -- Gli step del monorepo QMP sono registrati tramite l'helper package
+          -- cucumber (WithGivenXxxStep...), con espressioni composte a runtime:
+          -- il server non potrà mai risolverli, quindi "Undefined step" è solo rumore.
+          handlers = {
+            ['textDocument/publishDiagnostics'] = function(err, result, ctx)
+              if result and result.diagnostics then
+                result.diagnostics = vim.tbl_filter(function(d)
+                  return not vim.startswith(d.message, 'Undefined step')
+                end, result.diagnostics)
+              end
+              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx)
+            end,
+          },
+        },
         jsonls = {},
 
         lua_ls = {
