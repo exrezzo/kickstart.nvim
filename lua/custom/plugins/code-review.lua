@@ -47,6 +47,13 @@ return {
         view_mode = 'tree',
         focus_on_select = true,
       },
+      diff = { ignore_trim_whitespace = true },
+      keymaps = {
+        view = {
+          next_hunk = '<F3>',
+          prev_hunk = '<F1>',
+        },
+      },
     },
   },
 }
