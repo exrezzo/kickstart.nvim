@@ -916,7 +916,11 @@ require('lazy').setup({
         'roslyn', -- Microsoft Roslyn LS per C# (consumato da roslyn.nvim, non da mason-lspconfig)
         'csharpier', -- formatter C# (chiamato da conform su filetype cs)
       })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      require('mason-tool-installer').setup {
+        ensure_installed = ensure_installed,
+        auto_update = true, -- riallinea i binari (es. roslyn) quando i plugin che li guidano cambiano
+        debounce_hours = 5, -- non ricontrollare ad ogni avvio, al massimo ogni 5 ore
+      }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- gestiti da mason-tool-installer
